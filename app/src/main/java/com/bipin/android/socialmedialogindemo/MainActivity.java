@@ -92,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
             protected void onCurrentAccessTokenChanged(
                     AccessToken oldAccessToken,
                     AccessToken currentAccessToken) {
-                Log.e(MainActivity.class.getSimpleName() , oldAccessToken.getToken() + " " + currentAccessToken.getToken());
+//                Log.e(MainActivity.class.getSimpleName() , oldAccessToken.getToken() + " " + currentAccessToken.getToken());
 
             }
         };
@@ -106,6 +106,7 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
+        String fullName = Profile.getCurrentProfile().getFirstName() + Profile.getCurrentProfile().getLastName();
         LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("public_profile"));
         LoginManager.getInstance().registerCallback(callbackManager,
                 new FacebookCallback<LoginResult>() {
