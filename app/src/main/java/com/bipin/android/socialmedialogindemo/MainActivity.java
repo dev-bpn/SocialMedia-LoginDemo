@@ -29,7 +29,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private LoginButton loginButton;
     private CallbackManager callbackManager;
@@ -63,29 +63,11 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void onFacebookLoginBottomClick(View view){
-
-        // Callback registration
-        loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
-            @Override
-            public void onSuccess(LoginResult loginResult) {
-                Log.e(MainActivity.class.getSimpleName() , loginResult.toString());
-            }
-
-            @Override
-            public void onCancel() {
-                Log.e(MainActivity.class.getSimpleName() , "onCancel");
-            }
-
-            @Override
-            public void onError(FacebookException exception) {
-                Log.e(MainActivity.class.getSimpleName() , exception.toString());
-            }
-        });
-    }
 
     private void faceBookLoginListener(){
 
+        loginButton = (LoginButton) findViewById(R.id.login_button);
+        loginButton.setOnClickListener(this);
         callbackManager = CallbackManager.Factory.create();
         accessTokenTracker = new AccessTokenTracker() {
             @Override
@@ -102,11 +84,11 @@ public class MainActivity extends AppCompatActivity {
             protected void onCurrentProfileChanged(
                     Profile oldProfile,
                     Profile currentProfile) {
-                Log.e(MainActivity.class.getSimpleName() , oldProfile.getFirstName() + " " + currentProfile.getFirstName());
+//                Log.e(MainActivity.class.getSimpleName() , oldProfile.getFirstName() + " " + currentProfile.getFirstName());
             }
         };
 
-        String fullName = Profile.getCurrentProfile().getFirstName() + Profile.getCurrentProfile().getLastName();
+//        String fullName = Profile.getCurrentProfile().getFirstName() + Profile.getCurrentProfile().getLastName();
         LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("public_profile"));
         LoginManager.getInstance().registerCallback(callbackManager,
                 new FacebookCallback<LoginResult>() {
@@ -160,5 +142,36 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
         accessTokenTracker.stopTracking();
         profileTracker.stopTracking();
+    }
+
+    @Override
+    public void onClick(View v) {
+
+        String text = loginButton.getText().toString();
+        if(text.equals("Log in with Facebook")){
+            // Callback registration
+            loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+                @Override
+                public void onSuccess(LoginResult loginResult) {
+                    Log.e(MainActivity.class.getSimpleName() , loginResult.toString());
+                }
+
+                @Override
+                public void onCancel() {
+                    Log.e(MainActivity.class.getSimpleName() , "onCancel");
+                }
+
+                @Override
+                public void onError(FacebookException exception) {
+                    Log.e(MainActivity.class.getSimpleName() , exception.toString());
+                }
+
+            });
+        }else {
+            LoginManager.getInstance().logOut();
+
+        }
+
+
     }
 }
