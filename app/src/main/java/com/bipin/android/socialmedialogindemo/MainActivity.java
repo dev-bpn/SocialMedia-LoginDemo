@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import com.linkedin.platform.APIHelper;
 import com.linkedin.platform.LISessionManager;
@@ -41,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
                 // Authentication was successful.  You can now do
                 // other calls with the SDK.
                 Log.e("TAG" , "");
-                retriveBasicProfile();
+                retrieveBasicProfile();
             }
 
             @Override
@@ -52,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void retriveBasicProfile(){
+    private void retrieveBasicProfile(){
 
         String url = "https://api.linkedin.com/v1/people/~";
 
@@ -61,11 +62,39 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onApiSuccess(ApiResponse apiResponse) {
                 Log.e("TAG" , apiResponse.toString());
+                Toast.makeText(getApplicationContext() , apiResponse.toString() , Toast.LENGTH_LONG).show();
+                shareOnLinkedIn();
             }
 
             @Override
             public void onApiError(LIApiError liApiError) {
-                Log.e("TAG" , liApiError.toString());
+                Toast.makeText(getApplicationContext() , liApiError.toString() , Toast.LENGTH_LONG).show();
+            }
+        });
+
+    }
+
+    private void shareOnLinkedIn(){
+
+        String url = "https://api.linkedin.com/v1/people/~/shares";
+
+        String payload = "{" +
+                "\"comment\":\"Check out developer.linkedin.com! " +
+                "http://linkd.in/1FC2PyG\"," +
+                "\"visibility\":{" +
+                "    \"code\":\"anyone\"}" +
+                "}";
+
+        APIHelper apiHelper = APIHelper.getInstance(getApplicationContext());
+        apiHelper.postRequest(this, url, payload, new ApiListener() {
+            @Override
+            public void onApiSuccess(ApiResponse apiResponse) {
+                Toast.makeText(getApplicationContext() , apiResponse.toString() , Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onApiError(LIApiError liApiError) {
+                Toast.makeText(getApplicationContext() , liApiError.toString() , Toast.LENGTH_LONG).show();
             }
         });
 
